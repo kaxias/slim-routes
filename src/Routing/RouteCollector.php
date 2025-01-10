@@ -8,8 +8,7 @@ use Mrcl\SlimRoutes\Cache\FileCache;
 use Mrcl\SlimRoutes\Exception\RouteSetupException;
 use Mrcl\SlimRoutes\Exception\SlimRoutesException;
 use Mrcl\SlimRoutes\Parser\RouteParser;
-use Slim\Interfaces\RouteCollectorInterface;
-use Slim\Interfaces\RouteCollectorProxyInterface;
+use Slim\App;
 
 use function array_intersect;
 use function count;
@@ -29,7 +28,7 @@ final class RouteCollector
 
 
     public function __construct(
-        private RouteCollectorInterface|RouteCollectorProxyInterface $app
+        private App $app
     ) {
     }
 

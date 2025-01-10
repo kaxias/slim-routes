@@ -29,8 +29,8 @@ final class Route
      * @param ?string $name [optional] <p>Name</p>
      */
     public function __construct(
-        public readonly string $pattern = '',
         string|array $method = [HttpMethod::GET],
+        public readonly string $pattern = '',
         string|array $middleware = [],
         string|array $version = [],
         public readonly ?string $groupId = null,

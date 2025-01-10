@@ -12,8 +12,7 @@ use Mrcl\SlimRoutes\Routing\RouteCollector;
 use Mrcl\SlimRoutes\Routing\VersionConfiguration;
 use Mrcl\SlimRoutes\Routing\GroupConfiguration;
 use Mrcl\SlimRoutes\Util\ClassFinder;
-use Slim\Interfaces\RouteCollectorInterface;
-use Slim\Interfaces\RouteCollectorProxyInterface;
+use Slim\App;
 
 use function array_filter;
 use function array_reverse;
@@ -54,11 +53,11 @@ final class SlimRoutes
 
 
     /**
-     * @param RouteCollectorInterface|RouteCollectorProxyInterface $app
+     * @param App $app
      * @param string ...$directories
      */
     public function __construct(
-        RouteCollectorInterface|RouteCollectorProxyInterface $app,
+        App $app,
         string ...$directories
     ) {
         if (count($directories) === 0) {
