@@ -39,32 +39,39 @@ final class RouteCollector
         } else {
             $routes = $this->parser->parse();
             $this->routeCheck($routes);
+
             if ($this->prioritize) {
                 usort($routes, fn($ra, $rb) => $ra->priority <=> $rb->priority);
             }
+
             $this->routes = $routes;
+
             if ($this->cacheFile) {
                 $this->cacheRoutes();
             }
         }
+
         $this->addToSlim();
     }
 
     public function setParser(RouteParser $parser): self
     {
         $this->parser = $parser;
+
         return $this;
     }
 
     public function prioritizeRoutes(bool $prioritize): self
     {
         $this->prioritize = $prioritize;
+
         return $this;
     }
 
     public function setCacheFile(?string $cacheFile): self
     {
         $this->cacheFile = $cacheFile;
+
         return $this;
     }
 
@@ -82,15 +89,18 @@ final class RouteCollector
     private function loadFromCache(): array
     {
         $cached = (new FileCache($this->cacheFile))->read();
+
         if (!is_array($cached) || !($cached[0] ?? null) instanceof SlimRoute) {
             throw new SlimRoutesException(sprintf('Invalid cache file %s', $this->cacheFile));
         }
+
         return $cached;
     }
 
     private function cacheRoutes(): void
     {
         $cached = (new FileCache($this->cacheFile))->write($this->routes);
+
         if (!$cached) {
             throw new SlimRoutesException(sprintf('Caching to file %s was not successful', $this->cacheFile));
         }
@@ -102,9 +112,11 @@ final class RouteCollector
     private function routeCheck(array $routes): void
     {
         $list = [];
+
         foreach ($routes as $route) {
             if ($listEntry = ($list[$route->pattern] ?? false)) {
                 $duplicated = array_intersect($route->methods, $listEntry->methods);
+
                 if (count($duplicated) > 0) {
                     throw new RouteSetupException(sprintf('Route duplicate found! %s (partially) overrides %s', $route, $listEntry));
                 }
@@ -122,9 +134,11 @@ final class RouteCollector
                 $route->pattern,
                 $route->callable
             );
+
             foreach ($route->middleware as $middleware) {
                 $slimNativeRoute->add($middleware);
             }
+
             if ($route->name) {
                 $slimNativeRoute->setName($route->name);
             }

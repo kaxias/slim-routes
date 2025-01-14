@@ -32,6 +32,7 @@ final class VersionConfiguration implements Stringable
         public readonly bool $default = true
     ) {
         $this->middleware = array_reverse(is_string($middleware) ? [$middleware] : $middleware);
+
         foreach ($this->middleware as $mw) {
             if (!class_exists($mw)) {
                 throw new SlimRoutesException(sprintf('Middleware %s of VersionConfiguration %s does not exists!', $mw, $this->version));

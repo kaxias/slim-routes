@@ -23,6 +23,7 @@ final class RouteAttributeParser
         if ($this->reflection instanceof ReflectionClass) {
             return $this->reflection->name;
         }
+
         return $this->controller?->getCallable() . ':' . $this->reflection->name;
     }
 

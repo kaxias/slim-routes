@@ -30,6 +30,7 @@ final class GroupConfiguration
         private readonly ?GroupConfiguration $parent = null
     ) {
         $this->middleware = array_reverse(is_string($middleware) ? [$middleware] : $middleware);
+
         foreach ($this->middleware as $mw) {
             if (!class_exists($mw)) {
                 throw new SlimRoutesException(sprintf('Middleware %s of GroupConfiguration %s does not exists!', $mw, $this->id));
@@ -49,6 +50,7 @@ final class GroupConfiguration
             ];
         } else {
             [$pattern, $middleware] = $this->parent->flatten();
+
             return [
                 $pattern . RouteUtil::harmonizePattern($this->pattern),
                 [...$this->middleware, ...$middleware]

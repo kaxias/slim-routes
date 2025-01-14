@@ -60,6 +60,7 @@ final class RouteParser
 
             $controllerAttribute = $reflectionClass->getAttributes(Controller::class)[0] ?? null;
             $routeAttribute      = $reflectionClass->getAttributes(Route::class)[0] ?? null;
+
             if ($reflectionClass->isAbstract() && ($controllerAttribute || $routeAttribute)) {
                 throw new RouteSetupException(sprintf('[%s] Abstract classes cannot be routed!', $reflectionClass->name));
             }
@@ -70,12 +71,15 @@ final class RouteParser
                  */
                 $instance         = $controllerAttribute->newInstance();
                 $controllerParser = new ControllerAttributeParser($reflectionClass, $instance);
+
                 foreach ($reflectionClass->getMethods() as $reflectionMethod) {
                     $routeAttribute = $reflectionMethod->getAttributes(Route::class)[0] ?? null;
+
                     if ($routeAttribute) {
                         if (!$reflectionMethod->isPublic()) {
                             throw new RouteSetupException(sprintf('[%s] Action method cannot be routed!', $reflectionClass->name . ':' . $reflectionMethod->name));
                         }
+
                         /**
                          * @var Route $instance
                          */
@@ -111,6 +115,7 @@ final class RouteParser
         $apiVersions = $this->findApiVersions($parser);
 
         $routes = [];
+
         foreach ($apiVersions as $version) {
             $pattern  = RouteUtil::harmonizePattern($version->version, $groupPattern, $parser->getPattern());
             $name     = RouteUtil::harmonizeName($version->version, $parser->getRouteName());
@@ -125,15 +130,18 @@ final class RouteParser
                 $priority,
             );
         }
+
         return $routes;
     }
 
     private function findRouteGroup(RouteAttributeParser $parser): ?GroupConfiguration
     {
         $id = $parser->getGroupId();
+
         if ($id === null) {
             return null;
         }
+
         return array_values(array_filter($this->groups, fn($group) => $group->id === $id))[0]
             ?? throw new RouteSetupException(sprintf('[%s] Group with ID %s not found. Make sure the GroupConfiguration was added.', $parser->getCallable(), $id));
     }
@@ -144,14 +152,17 @@ final class RouteParser
     private function findApiVersions(RouteAttributeParser $parser): array
     {
         $versions = $parser->getApiVersion();
+
         if (count($versions) === 0) {
             return array_filter($this->apiVersions, fn($v) => $v->default);
         } else {
             $foundVersions = [];
+
             foreach ($versions as $version) {
                 $foundVersions[] = array_values(array_filter($this->apiVersions, fn($v) => $v->version === $version))[0]
                     ?? throw new RouteSetupException(sprintf('[%s] API version \'%s\' not found. Make sure the VersionConfiguration was added.', $parser->getCallable(), $version));
             }
+
             return array_unique($foundVersions);
         }
     }
@@ -181,9 +192,11 @@ final class RouteParser
         );
         $methods = array_unique($methods);
         $any     = array_search(HttpMethod::ANY, $methods, true);
+
         if ($any !== false) {
             array_splice($methods, $any, 1, $this->anyMethods);
         }
+
         return array_unique($methods);
     }
 }
